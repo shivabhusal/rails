@@ -185,11 +185,25 @@ end
 
 ### Support for Unencrypted Data
 
-To ease migrations of unencrypted data, the library includes the option `config.active_record.encryption.support_unencrypted_data`. When set to `true`, Rails will be more forgiving:
+To ease migrations of unencrypted data, the library includes the options 
+#### Global Option
+```ruby
+config.active_record.encryption.support_unencrypted_data = true
+```
+and
+
+#### Attribute Specific Option
+```ruby
+class User < ApplicationRecord
+  encrypts :email, support_unencrypted_data: true
+end
+```
+
+When set to `true`, Rails will be more forgiving:
 
 * **Reading**: If a supposedly encrypted attribute contains unencrypted data(plain text), it will be returned as-is instead of raising an error.
 * **Querying With deterministic encryption**: Normally, encrypted queries match only encrypted data. With this option `config.active_record.encryption.extend_queries = true`, Rails also searches for both encrypted and unencrypted values. 
-  * **Example**: If you query `User.find_by(email: "johndoe@example.com")`, Rails will generate a query that looks for both the encrypted "johndoe@example.com" and the clear-text "johndoe@example.com". 
+  * **Example**: If you query `User.find_by(email: "johndoe@example.com")`, Rails will generate a query that looks for both the encrypted `"johndoe@example.com"` and the clear-text `"johndoe@example.com"`. 
 
 This is designed for transition periods:
 
