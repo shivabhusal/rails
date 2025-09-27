@@ -166,6 +166,13 @@ class AggregationsTest < ActiveRecord::TestCase
 
     assert_equal "Lively Street", customers(:barney).address_street
   end
+
+  def test_defines_dirty_tracking_aggregate_attribute
+    customers(:barney).address = Address.new("Amazing Street", customers(:barney).address_city, customers(:barney).address_country)
+    # binding.pry
+    assert_equal true, customers(:barney).address.changed?
+    assert_equal true, customers(:barney).address.
+  end
 end
 
 class OverridingAggregationsTest < ActiveRecord::TestCase

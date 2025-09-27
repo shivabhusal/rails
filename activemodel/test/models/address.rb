@@ -2,7 +2,7 @@
 
 class Address
   include ActiveModel::Serializers::JSON
-
+  include ActiveModel::Dirty
   attr_accessor :address_line, :city, :state, :country
 
   def initialize(options = {})

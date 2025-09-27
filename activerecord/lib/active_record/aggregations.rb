@@ -239,6 +239,7 @@ module ActiveRecord
 
           reader_method(name, class_name, mapping, allow_nil, constructor)
           writer_method(name, class_name, mapping, allow_nil, converter)
+          dirty_tracking_method(name, class_name, mapping)
 
           reflection = ActiveRecord::Reflection.create(:composed_of, part_id, nil, options, self)
           Reflection.add_aggregate_reflection self, part_id, reflection
@@ -281,6 +282,15 @@ module ActiveRecord
                 @aggregation_cache[name] = part.dup.freeze
               end
             end
+          end
+
+          def dirty_tracking_method(name, class_name, mapping)
+            # insert ActiveModel::Dirty inside class_name class
+            # class_name.constantize.send(:include, ActiveModel::Dirty) unless class_name.constantize < ActiveModel::Dirty
+
+            # define_method("#{name}_changed?") do
+            #   mapping.any? { |key, _| self.public_send("#{key}_changed?") }
+            # end
           end
       end
   end
