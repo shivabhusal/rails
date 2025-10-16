@@ -158,21 +158,21 @@ module ActiveRecord
         module StraightReversions # :nodoc:
           private
             {
-              execute_block:     :execute_block,
-              create_table:      :drop_table,
-              create_join_table: :drop_join_table,
-              add_column:        :remove_column,
-              add_index:         :remove_index,
-              add_timestamps:    :remove_timestamps,
-              add_reference:     :remove_reference,
-              add_foreign_key:   :remove_foreign_key,
-              add_check_constraint: :remove_check_constraint,
+              execute_block:            :execute_block,
+              create_table:             :drop_table,
+              create_join_table:        :drop_join_table,
+              add_column:               :remove_column,
+              add_index:                :remove_index,
+              add_timestamps:           :remove_timestamps,
+              add_reference:            :remove_reference,
+              add_foreign_key:          :remove_foreign_key,
+              add_check_constraint:     :remove_check_constraint,
               add_exclusion_constraint: :remove_exclusion_constraint,
-              add_unique_constraint: :remove_unique_constraint,
-              enable_extension:  :disable_extension,
-              create_enum:       :drop_enum,
-              create_schema:     :drop_schema,
-              create_virtual_table: :drop_virtual_table
+              add_unique_constraint:    :remove_unique_constraint,
+              enable_extension:         :disable_extension,
+              create_enum:              :drop_enum,
+              create_schema:            :drop_schema,
+              create_virtual_table:     :drop_virtual_table
             }.each do |cmd, inv|
               [[inv, cmd], [cmd, inv]].uniq.each do |method, inverse|
                 class_eval <<-EOV, __FILE__, __LINE__ + 1

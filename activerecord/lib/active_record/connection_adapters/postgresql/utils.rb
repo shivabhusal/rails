@@ -58,7 +58,7 @@ module ActiveRecord
         # * <tt>"schema_name".table_name</tt>
         # * <tt>"schema.name"."table name"</tt>
         def extract_schema_qualified_name(string)
-          schema, table = string.scan(/[^".]+|"[^"]*"/)
+          schema, table = string.scan(/[^".]+|"[^"]*"/) # this is different from here in activerecord/lib/active_record/connection_adapters/mysql/schema_statements.rb:293
           if table.nil?
             table = schema
             schema = nil

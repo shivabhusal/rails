@@ -1802,6 +1802,8 @@ module ActiveRecord
         end
 
         def strip_table_name_prefix_and_suffix(table_name)
+          # possible issue here
+          # like from_table, to_table also can have schema.table_name format
           prefix = Base.table_name_prefix
           suffix = Base.table_name_suffix
           table_name.to_s =~ /#{prefix}(.+)#{suffix}/ ? $1 : table_name.to_s
@@ -1820,6 +1822,7 @@ module ActiveRecord
         def foreign_key_for(from_table, **options)
           return unless use_foreign_keys?
 
+          # this gets all foreign keys for the table
           keys = foreign_keys(from_table)
 
           if options[:_skip_column_match]
@@ -1827,6 +1830,7 @@ module ActiveRecord
           end
 
           if options[:column].nil?
+            # derive fk name from the to_table and column
             default_column = foreign_key_column_for(options[:to_table], "id")
             matches = keys.select { |fk| fk.column == default_column }
             keys = matches if matches.any?
@@ -1837,7 +1841,7 @@ module ActiveRecord
 
         def foreign_key_for!(from_table, to_table: nil, **options)
           foreign_key_for(from_table, to_table: to_table, **options) ||
-            raise(ArgumentError, "Table '#{from_table}' has no foreign key for #{to_table || options}")
+            raise(ArgumentError, "Table '#{from_table}' has no foreign key for #{to_table || options}") # this error raised
         end
 
         def extract_foreign_key_action(specifier)

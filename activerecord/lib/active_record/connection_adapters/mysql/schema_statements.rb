@@ -278,14 +278,19 @@ module ActiveRecord
           def quoted_scope(name = nil, type: nil)
             schema, name = extract_schema_qualified_name(name)
             scope = {}
-            scope[:schema] = schema ? quote(schema) : "database()"
+            scope[:schema] = schema ? quote(schema) : "database()" ## here
             scope[:name] = quote(name) if name
             scope[:type] = quote(type) if type
             scope
           end
 
+          # This is useful in database systems like MySQL, where objects can be qualified with a schema name
+          #   (e.g., schema_name.table_name).
+          # For example, if the input is `my_schema`.`my_table`, the method will return ["my_schema", "my_table"].
+          # If the input is my_table, it will return [nil, "my_table"]. This ensures flexibility in handling both
+          #   fully qualified and unqualified names.
           def extract_schema_qualified_name(string)
-            schema, name = string.to_s.scan(/[^`.\s]+|`[^`]*`/)
+            schema, name = string.to_s.scan(/[^`.\s]+|`[^`]*`/) # here
             schema, name = nil, schema unless name
             [schema, name]
           end

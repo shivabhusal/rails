@@ -508,7 +508,7 @@ module ActiveRecord
           WHERE fk.referenced_column_name IS NOT NULL
             AND fk.table_schema = #{scope[:schema]}
             AND fk.table_name = #{scope[:name]}
-            AND rc.constraint_schema = #{scope[:schema]}
+            AND rc.constraint_schema = #{scope[:schema]} # here
             AND rc.table_name = #{scope[:name]}
         SQL
 

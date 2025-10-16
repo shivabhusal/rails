@@ -629,7 +629,7 @@ module ActiveRecord
             JOIN pg_namespace n ON c.connamespace = n.oid
             WHERE c.contype = 'f'
               AND t1.relname = #{scope[:name]}
-              AND n.nspname = #{scope[:schema]}
+              AND n.nspname = #{scope[:schema]} ## here
             ORDER BY c.conname
           SQL
 
@@ -1164,6 +1164,7 @@ module ActiveRecord
             sql
           end
 
+          # issue is here
           def quoted_scope(name = nil, type: nil)
             schema, name = extract_schema_qualified_name(name)
             type = \
@@ -1182,7 +1183,7 @@ module ActiveRecord
             scope
           end
 
-          def extract_schema_qualified_name(string)
+          def extract_schema_qualified_name(string) # here
             name = Utils.extract_schema_qualified_name(string.to_s)
             [name.schema, name.identifier]
           end
