@@ -88,5 +88,16 @@ module ApplicationTests
       assert_not_includes Rails.application.config.filter_parameters, "application_record.expires_at"
       assert_not_includes Rails.application.config.filter_parameters, "base.expires_at"
     end
+
+    test "AR.strict_loading_mode changes with global config change" do
+      # has default value set already
+      assert_equal ActiveRecord::Base.strict_loading_mode, :all
+
+      add_to_config("config.active_record.strict_loading_mode = :n_plus_one_only")
+
+      app "development"
+
+      assert_equal :n_plus_one_only, ActiveRecord::Base.strict_loading_mode
+    end
   end
 end

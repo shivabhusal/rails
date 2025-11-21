@@ -121,6 +121,8 @@ module ActiveRecord
       end
 
       def set_strict_loading(record)
+        #puts "set_strict_loading(record)"
+        #puts "It marks the object with strict_loading n+1 if owner has SL n+1 set "
         if owner.strict_loading_n_plus_one_only? && reflection.macro == :has_many
           record.strict_loading!
         else
@@ -245,9 +247,9 @@ module ActiveRecord
           klass
         end
 
-        def find_target(async: false)
+        def find_target(async: false) #herer
           if violates_strict_loading?
-            Base.strict_loading_violation!(owner: owner.class, reflection: reflection)
+            Base.strict_loading_violation!(owner: owner.class, reflection: reflection) #here
           end
 
           scope = self.scope
@@ -281,13 +283,18 @@ module ActiveRecord
           @skip_strict_loading = skip_strict_loading_was
         end
 
-        def violates_strict_loading?
+        def violates_strict_loading? # here
+          # require 'debug'; binding.b
+
           return if @skip_strict_loading
 
           return unless owner.validation_context.nil?
 
           return reflection.strict_loading? if reflection.options.key?(:strict_loading)
 
+          # require 'debug'; binding.b
+          # execution has not come here for
+          # Developer.all.each {|d| d.projects }
           owner.strict_loading? && !owner.strict_loading_n_plus_one_only?
         end
 

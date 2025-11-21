@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require 'rails'
 require "cases/helper"
 require "models/developer"
 require "models/contract"
@@ -84,6 +84,46 @@ class StrictLoadingTest < ActiveRecord::TestCase
     end
   end
 
+  def test_strict_loading_n_plus_one_only_mode_with_has_many_set_globally
+    old_config = ActiveRecord::Base.strict_loading_mode
+    ActiveRecord::Base.strict_loading_mode = :n_plus_one_only
+
+    developer = Developer.first
+    firm = Firm.create!(name: "NASA")
+    developer.projects << Project.create!(name: "Apollo", firm: firm)
+
+    developer.reload
+
+    # works fine
+    assert_raises ActiveRecord::StrictLoadingViolationError do
+      developer.projects.last.firm
+    end
+
+    # works fine - raises
+    assert_raises ActiveRecord::StrictLoadingViolationError do
+      Developer.all.each {|d| d.projects.map(&:firm) }
+    end
+
+    # fails
+    puts "Testing n+1 only mode with has_many globally set"
+    assert_raises ActiveRecord::StrictLoadingViolationError do
+      Developer.all.each {|d| d.projects }
+      # Developer.each {|d| d.projects }
+    end
+
+    # fails
+    assert_raises ActiveRecord::StrictLoadingViolationError do
+      Project.all.each {|p| p.firm}
+    end
+
+    # works fine
+    assert_nothing_raised do
+      developer.projects.to_a
+    end
+  ensure
+    ActiveRecord::Base.strict_loading_mode = old_config
+  end
+
   def test_strict_loading_n_plus_one_only_mode_with_belongs_to
     developer = Developer.first
     ship = Ship.first
@@ -126,13 +166,26 @@ class StrictLoadingTest < ActiveRecord::TestCase
     assert_predicate developer, :strict_loading_all?
   end
 
-  def test_default_mode_can_be_changed_globally
+  def test_default_mode_can_be_changed_from_model_level
     developer = Class.new(ActiveRecord::Base) do
       self.strict_loading_mode = :n_plus_one_only
       self.table_name = "developers"
     end.new
 
     assert_predicate developer, :strict_loading_n_plus_one_only?
+  end
+
+  def test_default_mode_can_be_changed_globally
+    old_config = ActiveRecord::Base.strict_loading_mode
+    ActiveRecord::Base.strict_loading_mode = :n_plus_one_only
+
+    developer = Class.new(ActiveRecord::Base) do
+      self.table_name = "developers"
+    end.new
+
+    assert_predicate developer, :strict_loading_n_plus_one_only?
+  ensure
+    ActiveRecord::Base.strict_loading_mode = old_config
   end
 
   def test_strict_loading

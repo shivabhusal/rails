@@ -87,7 +87,7 @@ module ActiveRecord
 
       class_attribute :belongs_to_required_by_default, instance_accessor: false
 
-      class_attribute :strict_loading_by_default, instance_accessor: false, default: false
+      class_attribute :strict_loading_by_default, instance_accessor: false, default: false #here
       class_attribute :strict_loading_mode, instance_accessor: false, default: :all
 
       class_attribute :has_many_inversing, instance_accessor: false, default: false
@@ -249,7 +249,7 @@ module ActiveRecord
       self.default_role = ActiveRecord.writing_role
       self.default_shard = :default
 
-      def self.strict_loading_violation!(owner:, reflection:) # :nodoc:
+      def self.strict_loading_violation!(owner:, reflection:) # :nodoc: #here
         case ActiveRecord.action_on_strict_loading_violation
         when :raise
           message = reflection.strict_loading_violation_message(owner)
@@ -721,6 +721,7 @@ module ActiveRecord
     #   user.comments.first.ratings.to_a
     #   # => ActiveRecord::StrictLoadingViolationError
     def strict_loading!(value = true, mode: :all)
+      #puts "def strict_loading!(value = true, mode: :all)"
       unless [:all, :n_plus_one_only].include?(mode)
         raise ArgumentError, "The :mode option must be one of [:all, :n_plus_one_only] but #{mode.inspect} was provided."
       end
@@ -845,7 +846,7 @@ module ActiveRecord
         klass = self.class
 
         @primary_key         = klass.primary_key
-        @strict_loading      = klass.strict_loading_by_default
+        @strict_loading      = klass.strict_loading_by_default #here
         @strict_loading_mode = klass.strict_loading_mode
 
         klass.define_attribute_methods
