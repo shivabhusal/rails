@@ -249,6 +249,7 @@ module ActiveRecord
 
         def find_target(async: false) #herer
           if violates_strict_loading?
+            puts "violates_strict_loading?"
             Base.strict_loading_violation!(owner: owner.class, reflection: reflection) #here
           end
 
@@ -283,6 +284,9 @@ module ActiveRecord
           @skip_strict_loading = skip_strict_loading_was
         end
 
+        # find_target calls this to check if strict loading is violated
+        # if this method is called its means the association is being lazy loaded
+        # target is not preloaded
         def violates_strict_loading? # here
           # require 'debug'; binding.b
 
@@ -291,11 +295,11 @@ module ActiveRecord
           return unless owner.validation_context.nil?
 
           return reflection.strict_loading? if reflection.options.key?(:strict_loading)
+          puts "violates_strict_loading??"
 
-          # require 'debug'; binding.b
-          # execution has not come here for
-          # Developer.all.each {|d| d.projects }
           owner.strict_loading? && !owner.strict_loading_n_plus_one_only?
+
+          owner.strict_loading? && owner.strict_loading_n_plus_one_only? && reflection.macro == :has_many
         end
 
         # The scope for this association.
