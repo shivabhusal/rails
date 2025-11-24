@@ -77,8 +77,13 @@ class StrictLoadingTest < ActiveRecord::TestCase
     assert_nothing_raised do
       developer.projects_extended_by_name.to_a
     end
-
     assert developer.projects_extended_by_name.all?(&:strict_loading?)
+
+    # fails
+    assert_raises ActiveRecord::StrictLoadingViolationError do
+      Project.all.each {|p| p.firm}
+    end
+
     assert_raises ActiveRecord::StrictLoadingViolationError do
       developer.projects_extended_by_name.last.firm
     end
