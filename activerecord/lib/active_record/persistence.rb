@@ -485,6 +485,8 @@ module ActiveRecord
     #
     # If you want to change the STI column as well, use #becomes! instead.
     def becomes(klass)
+      return self if self.class == klass
+
       became = klass.allocate
 
       became.send(:initialize) do |becoming|
