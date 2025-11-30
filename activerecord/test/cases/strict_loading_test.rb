@@ -121,6 +121,31 @@ class StrictLoadingTest < ActiveRecord::TestCase
     end
   end
 
+  # fails
+  def test_global_strict_mode_n_plus_one_only_is_working
+    with_strict_loading_by_default(Developer, mode: :n_plus_one_only) do
+      # require 'debug'; binding.b
+      assert_predicate Developer, :strict_loading_by_default
+      assert_equal :n_plus_one_only, Developer.strict_loading_mode
+      assert_equal true, Developer.first.strict_loading_n_plus_one_only?
+      assert_raises match: /`Developer` is marked for strict_loading/ do
+        Developer.all.map { |dev| dev.projects.first }
+      end
+    end
+  end
+
+  # passes
+  def test_global_strict_mode_all_is_working
+    with_strict_loading_by_default(Developer, mode: :all) do
+      # require 'debug'; binding.b
+      assert_predicate Developer, :strict_loading_by_default
+      assert_equal :all, Developer.strict_loading_mode
+      assert_raises match: /`Developer` is marked for strict_loading/ do
+        Developer.all.map { |dev| dev.projects.first }
+      end
+    end
+  end
+
   def test_default_mode_is_all
     developer = Developer.first
     assert_predicate developer, :strict_loading_all?
@@ -134,6 +159,7 @@ class StrictLoadingTest < ActiveRecord::TestCase
 
     assert_predicate developer, :strict_loading_n_plus_one_only?
   end
+
 
   def test_strict_loading
     Developer.all.each { |d| assert_not d.strict_loading? }
@@ -738,14 +764,17 @@ class StrictLoadingTest < ActiveRecord::TestCase
   end
 
   private
-    def with_strict_loading_by_default(model)
-      previous_strict_loading_by_default = model.strict_loading_by_default
+    def with_strict_loading_by_default(model, mode: nil)
+      previous_strict_loading_by_default  = model.strict_loading_by_default
+      previous_strict_loading_mode        = model.strict_loading_mode
 
       model.strict_loading_by_default = true
+      model.strict_loading_mode       = mode unless mode.nil?
 
       yield
     ensure
       model.strict_loading_by_default = previous_strict_loading_by_default
+      model.strict_loading_mode       = previous_strict_loading_mode
     end
 
     def assert_logged(message)
