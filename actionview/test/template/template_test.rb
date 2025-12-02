@@ -220,6 +220,11 @@ class TestERBTemplate < ActiveSupport::TestCase
     assert_equal "Hello", render
   end
 
+  def test_multiline_locals_can_be_specified
+    @template = new_template("<%# locals: (arg_1:,\n             arg_2: nil,\n             arg_3: []) -%>\n<%= arg_1 %><%= arg_2 %><%= arg_3 %>")
+    assert_equal "First[]", render(arg_1: "First")
+  end
+
   def test_required_locals_must_be_specified
     error = assert_raises(ActionView::Template::Error) do
       @template = new_template("<%# locals: (message:) -%>")
