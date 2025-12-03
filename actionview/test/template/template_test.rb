@@ -220,8 +220,14 @@ class TestERBTemplate < ActiveSupport::TestCase
     assert_equal "Hello", render
   end
 
-  def test_multiline_locals_can_be_specified
-    @template = new_template("<%# locals: (arg_1:,\n             arg_2: nil,\n             arg_3: []) -%>\n<%= arg_1 %><%= arg_2 %><%= arg_3 %>")
+  def test_locals_can_spread_to_multiple_lines
+    template = <<~ERB.chomp
+        <%# locals: (arg_1:,
+                     arg_2: nil,
+                     arg_3: []) -%>
+        <%= arg_1 %><%= arg_2 %><%= arg_3 %>
+    ERB
+    @template = new_template(template)
     assert_equal "First[]", render(arg_1: "First")
   end
 
