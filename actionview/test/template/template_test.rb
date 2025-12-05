@@ -220,6 +220,11 @@ class TestERBTemplate < ActiveSupport::TestCase
     assert_equal "Hello", render
   end
 
+  def test_locals_with_parantheses
+    @template = new_template("<%# locals: (message: '(Hello)') -%>\n<%= message %>")
+    assert_equal "(Hello)", render
+  end
+
   def test_locals_can_spread_to_multiple_lines
     template = <<~ERB.chomp
         <%# locals: (arg_1:,
