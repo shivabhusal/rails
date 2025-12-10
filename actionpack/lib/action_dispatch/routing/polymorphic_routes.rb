@@ -144,6 +144,7 @@ module ActionDispatch
         opts   = options.dup
         action = opts.delete :action
         type   = :path
+        # binding.irb
 
         HelperMethodBuilder.polymorphic_method self,
                                                record_or_hash_or_array,

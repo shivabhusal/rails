@@ -115,10 +115,17 @@ module ActionDispatch
 
         def self.normalize_path(path, format)
           path = Mapper.normalize_path(path)
+          # binding.irb
 
           if format == true
             "#{path}.:format"
+          elsif format == nil
+            binding.irb
+
+            path
           elsif optional_format?(path, format)
+            binding.irb
+
             "#{path}(.:format)"
           else
             path

@@ -174,6 +174,7 @@ module ActionDispatch
 
           add_params(path, options[:params]) if options.key?(:params)
           add_anchor(path, options[:anchor]) if options.key?(:anchor)
+          # binding.irb
 
           path
         end

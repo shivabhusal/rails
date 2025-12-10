@@ -128,6 +128,14 @@ module ActionDispatch
         assert_equal "/foo/1/bar/2", url_helpers.foo_bar_path(2, foo_id: 1)
       end
 
+      test "singular resource" do
+        draw do
+          resource :foo
+        end
+
+        assert_equal "/foo", url_helpers.foo_path(1)
+      end
+
       test "having an optional scope with resources" do
         draw do
           scope "(/:foo)" do

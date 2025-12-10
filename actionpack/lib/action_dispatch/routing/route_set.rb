@@ -127,6 +127,7 @@ module ActionDispatch
           routes[key] = route
 
           helper = UrlHelper.create(route, route.defaults, name)
+
           define_url_helper @path_helpers_module, path_name, helper, PATH
           define_url_helper @url_helpers_module, url_name, helper, UNKNOWN
 
@@ -722,6 +723,8 @@ module ActionDispatch
           normalize_controller_action_id!
           use_relative_controller!
           normalize_controller!
+          # binding.irb
+
         end
 
         def controller
@@ -765,6 +768,8 @@ module ActionDispatch
         # identical. If any of :controller, :action or :id is not found, don't pull any
         # more keys from the recall.
         def normalize_controller_action_id!
+          # binding.irb
+
           use_recall_for(:controller) || return
           use_recall_for(:action) || return
           use_recall_for(:id)
@@ -896,6 +901,7 @@ module ActionDispatch
         options[:params]      = params
         options[:user]        = user
         options[:password]    = password
+        # binding.irb
 
         url_strategy.call options
       end
